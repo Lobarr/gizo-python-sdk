@@ -1,5 +1,6 @@
 import pytest
-import sys, os
+import sys
+import os
 from robber import expect
 myPath = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, myPath + '/../')
@@ -14,3 +15,4 @@ class TestEnvs(object):
     def test_envs(self):
         envs = Envs(Env("test", "test"), Env("test", "test"))
         expect(len(envs.envs)).to.equal(2)
+        

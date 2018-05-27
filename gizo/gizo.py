@@ -5,60 +5,88 @@ import base64
 import sys
 from os import path
 from furl import furl
-from gizo.centrum import CENTRUM
+from gizo.centrum import CENTRUM_TESTNET, CENTRUM
 from gizo.dispatcher import Dispatcher
 from gizo.env import Envs
 from gizo.job import JobRequest
 
+#TODO: allow connection to both testnet and prod
 class Gizo:
-    def __init__(self, url: str =None, export_file: str= None):
+    """Connects to dispatcher and exposes rpc methods
+    Parameters
+    ----------
+    url : str
+        url of specific dispatcher to connect to
+    export_file : str
+        file for config to be written
+    test_net : bool
+        specifies if sdk should connect to testnet or prod network
+
+    Raises
+    ------
+    Exception
+        if unable to connect to centrum
+        if unable to connect to a specified dispatcher
+        if no dispatchers are available
+    """
+    def __init__(self, url:str=None, export_file:str=None,test:bool=False):
         self.__dispatcher: Dispatcher = None
         self.__client: hprose.HproseHttpClient = None
-        self.__file: str = None
+        self.__config: str = None
         self.__keys: dict = None
+        self.__test: bool = test
 
-        if export_file is None:
-            self.__file = ".gizo"
+        if export_file == None:
+            if self.__test:
+                self.__config = ".gizo-test"
+            else:
+                self.__config = ".gizo"
         else:
-            self.__file = export_file    
+            self.__config = export_file    
             
-        if path.isfile(self.__file):
+        if path.isfile(self.__config):
                 try:
                     self.__import_config()
-                    r = requests.get(self.__dispatcher.status(), timeout=0.5)
+                    requests.get(self.__dispatcher.status(), timeout=0.5)
                     self.__client = self.__connect_dispatcher(self.__dispatcher)
                 except Exception:
                     self.__dispatcher = None
                     self.__connect()
-                    self.__export_config()
-                
+                    self.__export_config()                
         else:
             if url != None:
                 try:
                     self.__dispatcher = Dispatcher(url)
+                    requests.get(self.__dispatcher.status(), timeout=0.5)
                     self.__client = self.__connect_dispatcher(self.__dispatcher)
                     self.__keys = self.KeyPair()
                     self.__export_config()
-                except Exception as e:
-                    print(str(e))
-                    sys.exit(1)
+                except Exception:
+                    raise Exception("unable to connect to dispatcher")
             else:
                 self.__connect()
                 self.__keys = self.KeyPair()
                 self.__export_config()
     def __import_config(self):
-        with open(self.__file, "r") as f:
+        """imports dispatcher and keys from config file"""
+        with open(self.__config, "r") as f:
             content = json.loads(f.read())
         self.__dispatcher = Dispatcher(content["dispatcher"])
         self.__keys = content["keys"]
     def __export_config(self):
+        """exports dispatcher and keys to config file"""
         temp: dict = {}
         temp["dispatcher"] = self.__dispatcher.url
         temp["keys"] = self.__keys
-        with open(self.__file, "w+") as f:
+        with open(self.__config, "w+") as f:
             f.write(json.dumps(temp))
     def __connect(self):
-        r = requests.get(f"{CENTRUM}/v1/dispatchers")
+        """connects to a dispatcher"""
+        r = None
+        if self.__test:
+            r = requests.get(f"{CENTRUM_TESTNET}/v1/dispatchers")
+        else:
+            r = requests.get(f"{CENTRUM}/v1/dispatchers")
         if r.status_code == 200:
             dispatchers = r.json()
             for dispatcher in dispatchers:
@@ -69,13 +97,33 @@ class Gizo:
                     break
                 except Exception:
                     pass
-            if self.__dispatcher is None:
+            if self.__dispatcher == None:
                 raise Exception("no dispatchers available")   
         else:
             raise Exception("unable to connect to centrum")
     def __connect_dispatcher(self, dispatcher: Dispatcher) -> hprose.HproseHttpClient:
+        """connects to a dispatcher
+        Parameters
+        ----------
+        dispatcher : Dispatcher
+            object of dispatcher to connect
+
+        Returns
+        -------
+        hprose connection
+        """
         return hprose.HttpClient(uri=dispatcher.rpc())
     def __readTask(self, fn: str) -> str:
+        """reads an anko file
+        Parameters
+        ----------
+        fn : str
+            name of anko file
+
+        Returns
+        ------
+        content of specified anko file
+        """        
         with open(fn, "r") as f:
             content = f.read()
         return content
@@ -100,6 +148,8 @@ class Gizo:
     def PublicKey(self) -> str:
         return self.__client.PublicKey()
     def NewJob(self, fn: str, name: str, priv: bool) -> str:
+        if fn.find(".ank") == -1:
+            raise Exception("only anko files accepted")
         return self.__client.NewJob(self.__readTask(fn), name, priv, self.__keys['priv'])
     def NewExec(self, args:list=None, retries: int=None, priority:int=None, backoff:int=None, exec_time: int=None, interval:int=None, ttl:int=None, envs:Envs=None) -> dict:
         return json.loads(self.__client.NewExec(args, retries, priority, backoff, exec_time, interval, ttl, self.__keys['pub'], json.dumps(envs.envs)))
