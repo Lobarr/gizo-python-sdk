@@ -1,5 +1,7 @@
 import pytest
-import sys, os, base64
+import sys
+import os
+import base64
 from robber import expect
 myPath = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, myPath + '/../')
