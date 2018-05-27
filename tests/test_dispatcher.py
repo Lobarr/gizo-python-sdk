@@ -1,3 +1,4 @@
+"""Test for dispatcher"""
 import pytest
 import sys
 import os

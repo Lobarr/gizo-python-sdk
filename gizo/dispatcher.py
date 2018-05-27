@@ -21,9 +21,17 @@ class Dispatcher:
             self.port = parsed.port
         else:
             raise Exception("Unable to parse input url")
-    def rpc(self):
-        """returns dispatcher node's rpc endpoint"""
+    def rpc(self) -> str:
+        """
+        Returns : str
+        -------
+        dispatcher node's rpc endpoint
+        """
         return f"http://{self.ip}:{self.port}/rpc"
-    def status(self):
-        """returns dispatcher nodes's status endpoint"""
+    def status(self) -> str:
+        """
+        Returns : str
+        -------
+        dispatcher nodes's status endpoint
+        """
         return f"http://{self.ip}:{self.port}/status"

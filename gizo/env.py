@@ -1,3 +1,4 @@
+"""Exec Environment Variables"""
 class Env:
     """Exec environment variable
     Parameters
@@ -10,8 +11,12 @@ class Env:
     def __init__(self, key: str, value):
         self.key = key
         self.value = value
-    def env(self):
-        """returns environment variable"""
+    def env(self) -> dict:
+        """
+        Returns : dict
+        -------
+        environment variable
+        """
         return {self.key: self.value}
 
 class Envs:
