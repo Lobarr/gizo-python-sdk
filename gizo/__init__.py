@@ -3,7 +3,7 @@
 from gizo.dispatcher import Dispatcher
 from gizo.env import Env, Envs
 from gizo.gizo import Gizo
-from gizo.job import JobRequest
-import gizo.priorities as priorities
-import gizo.utils as utils
-import gizo.status as status
+from gizo.job import JobRequest, JobRequests
+import gizo.priorities as Priorities
+import gizo.utils as Utils
+import gizo.status as Status

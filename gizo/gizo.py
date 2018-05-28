@@ -34,6 +34,10 @@ class Gizo:
         self.__config: str
         self.__keys: dict
         self.__test: bool = test
+        self.jobs: List[dict] = {}
+        """Holds jobs deployed from the SDK
+        Key value pair of job name and Job ID
+        """
 
         if export_file is None:
             if self.__test:
@@ -76,6 +80,7 @@ class Gizo:
             content = json.loads(f.read())
         self.__dispatcher = Dispatcher(content["dispatcher"])
         self.__keys = content["keys"]
+        self.jobs = content["jobs"]
     def __export_config(self) -> None:
         """Exports dispatcher and keys to config file
         Raises
@@ -86,8 +91,9 @@ class Gizo:
         temp: dict = {}
         temp["dispatcher"] = self.__dispatcher.url
         temp["keys"] = self.__keys
+        temp["jobs"] = self.jobs
         with open(self.__config, "w+") as f:
-            f.write(json.dumps(temp))
+            f.write(json.dumps(temp, indent=4, separators=(',', ': '), sort_keys=True))
     def __connect(self) -> None:
         """Connects to a dispatcher
         Raises
@@ -196,7 +202,7 @@ class Gizo:
         """
         Returns : list
         -------
-        array of most recent 15 blocks
+        list of most recent 15 blocks
         """
         return json.loads(self.__client.Latest15Blocks())
     def LatestBlock(self) -> dict:
@@ -210,7 +216,7 @@ class Gizo:
         """
         Returns : int
         -------
-        number of jobs waiting to be written to the bc
+        number of jobs waiting to be written to the blockchain
         """
         return self.__client.PendingCount()
     def Score(self) -> float:
@@ -236,6 +242,7 @@ class Gizo:
         return self.__client.PublicKey()
     def NewJob(self, fn: str, name: str, priv: bool) -> str:
         """
+        Deploys Job to the Blockchain and writes job name and id to jobs variable 
         Parameters
         ---------
         fn : str
@@ -245,10 +252,6 @@ class Gizo:
         priv : bool
             specified if job is private / public 
 
-        Returns : str
-        -------
-        id of job
-
         Raises
         ------
         Exception 
@@ -256,7 +259,9 @@ class Gizo:
         """
         if fn.find(".ank") == -1:
             raise Exception("only anko files accepted")
-        return self.__client.NewJob(self.__readTask(fn), name, priv, self.__keys['priv'])
+        job_id: str = self.__client.NewJob(self.__readTask(fn), name, priv, self.__keys['priv'])
+        self.jobs[name] = job_id
+        self.__export_config()
     def NewExec(self, args: list, retries: int, priority: int, backoff: int, exec_time: int, interval: int, ttl: int, envs: Envs) -> dict:
         """
         Parameters
@@ -861,11 +866,11 @@ class Gizo:
         """
         return self.__client.Solo(jr.jr())
     def Chord(self, jrs: list, callback_jr: JobRequests) -> Any:
-        """ Executes execs one after the other then passes results into callback exec as an array (allows multiple jobs and multiple execs)
+        """ Executes execs one after the other then passes results into callback exec as a list (allows multiple jobs and multiple execs)
         Parameters
         ----------
         jrs : list
-            array of JobRequests
+            list of JobRequests
         callback_jr : JobRequests
             callback job requests
         """
@@ -875,7 +880,7 @@ class Gizo:
         Parameters
         ----------
         jrs : list
-            array of JobRequests
+            list of JobRequests
         """
         return self.__client.Chain(jrs)
     def Batch(self, jrs: list) -> Any:
@@ -883,7 +888,7 @@ class Gizo:
         Parameters
         ----------
         jrs : list
-            array of job requests
+            list of job requests
 
         Raises
         ------

@@ -15,6 +15,27 @@ This is a [Gizo](https://github.com/gizo-network/gizo) compatible Python SDK whi
   * [Connecting to specific dispatcher](#connecting-to-specific-dispatcher)
   * [Specifying file path for config file](#specifying-file-path-for-config-file)
 - [API](#api)
+  * [Version](#version)
+    + [Example return](#example-return)
+  * [PeerCount](#peercount)
+  * [BlockByHash](#blockbyhash)
+  * [BlockByHeight](#blockbyheight)
+  * [Latest15Blocks](#latest15blocks)
+  * [LatestBlock](#latestblock)
+  * [PendingCount](#pendingcount)
+  * [Score](#score)
+  * [Peers](#peers)
+  * [PublicKey](#publickey)
+  * [NewJob](#newjob)
+    + [Public Job - can be executed by anyone](#public-job---can-be-executed-by-anyone)
+    + [Private Job - can be executed by only user public key](#private-job---can-be-executed-by-only-user-public-key)
+    + [Example Job file](#example-job-file)
+  * [NewExec](#newexec)
+    + [Example return](#example-return-1)
+  * [WorkersCount](#workerscount)
+  * [WorkersCountBusy](#workerscountbusy)
+  * [WorkersCountNotBusy](#workerscountnotbusy)
+  * [ExecStatus](#execstatus)
 - [Built With](#built-with)
 - [Versioning](#versioning)
 - [Contributing](#contributing)
@@ -69,21 +90,25 @@ from gizo-sdk import Gizo
 gizo = Gizo(export_file="./tmp/.gizo")
 
 ```
-> Config file holds currently connected dispatcher and user's public and private keypair
+> Config file holds currently connected dispatcher, jobs deployed from the SDK and user's public and private keys
+
+> Default config file for main network is `.gizo` and for the test network is `.gizo-test`
+
+> Important - config file should be kept safe as keypair could be used to execute user's private jobs (treat as environment variables)
 
 
-> Important - config file should be kept safe as keypair could be used to execute private jobs (treat as environment variables)
 
 ## API
 ### Version
 Returns dispatcher node's version information
 ```python
 from gizo-sdk import Gizo
+
 gizo = Gizo()
 version = gizo.Version()
 ````
 
-### Example return
+#### Example return
 
 ```python
 {
@@ -97,9 +122,11 @@ version = gizo.Version()
 Return the number of peers a node has
 ```python
 from gizo-sdk import Gizo
+
 gizo = Gizo()
 count = gizo.PeerCount()
 ````
+
 ### BlockByHash
 Returns block of specified hash
 
@@ -109,6 +136,190 @@ from gizo-sdk import Gizo
 hash = "001f176b24e37440867e1a60fdb1c8e691a29e1651e9b7b57d6eb38335d94dfe"
 gizo = Gizo()
 block = gizo.BlockByHash(hash)
+```
+
+### BlockByHeight
+Returns block at specified height
+
+```python
+from gizo-sdk import Gizo
+
+gizo = Gizo()
+block = gizo.BlockByHeight(0) # genesis block
+```
+
+### Latest15Blocks
+Returns list of most recent 15 blocks
+
+```python
+from gizo-sdk import Gizo
+
+gizo = Gizo()
+blocks = gizo.Latest15Blocks()
+```
+
+### LatestBlock
+Returns latest block in the blockchain
+
+```python
+from gizo-sdk import Gizo
+
+gizo = Gizo()
+block = gizo.LatestBlock()
+```
+
+### PendingCount
+Returns number of jobs waiting to be written to the blockchain
+
+```python
+from gizo-sdk import Gizo
+
+gizo = Gizo()
+count = gizo.PendingCount()
+```
+
+### Score
+Returns benchmark score of node
+
+```python
+from gizo-sdk import Gizo
+
+gizo = Gizo()
+score = gizo.Score()
+```
+
+### Peers
+Returns list of public keys of its peers
+
+```python
+from gizo-sdk import Gizo
+
+gizo = Gizo()
+peers = gizo.Peers()
+```
+
+### PublicKey
+Return public key of node
+
+```python
+from gizo-sdk import Gizo
+
+gizo = Gizo()
+pub = gizo.PublicKey()
+```
+
+### NewJob
+Deploys Job to the Blockchain, writes job name and id to jobs variable
+> Job IDs are kept in jobs variable 
+
+#### Public Job - can be executed by anyone
+
+```python
+from gizo-sdk import Gizo
+
+job_name = "Factorial"
+gizo = Gizo()
+gizo.NewJob("/tmp/test.ank", job_name, priv=False) 
+gizo.jobs[job_name] # used to access job ID
+```
+
+#### Private Job - can be executed by only user public key
+
+```python
+from gizo-sdk import Gizo
+
+job_name = "Factorial"
+gizo = Gizo()
+gizo.NewJob("/tmp/test.ank", job_name, priv=True) 
+gizo.jobs[job_name] # used to access job ID
+```
+
+#### Example Job file
+```go
+// file - /tmp/test.ank
+func Factorial(n){
+    if(n > 0){
+    result = n * Factorial(n-1)
+    return result
+    }
+    return 1
+}
+```
+
+### NewExec
+Return exec dict with specified config
+
+```python
+from gizo-sdk import Gizo, Priorities, Env, Envs
+
+gizo = Gizo()
+_exec = gizo.NewExec([0], 5, Priorities.NORMAL, 0, 0, 0, 0, Envs(Env("test", "test")))
+```
+#### Example return
+```python
+{
+    "Hash": None,
+    "Timestamp": 0,
+    "Duration": 0,
+    "Args": [
+        0
+    ],
+    "Err": None,
+    "Priority": 0,
+    "Result": None,
+    "Status": "STARTED",
+    "Retries": 5,
+    "RetriesCount": 0,
+    "Backoff": 0,
+    "ExecutionTime": 0,
+    "Interval": 0,
+    "By": "",
+    "TTL": 0,
+    "Pub": "304e301006072a8648ce3d020106052b81040021033a000473ed48af27222301e8907ce4031b6811b6ce0a0edb0b40426e57180468312985aefdd3e340eac3349a42225514c39231f4b733d8e07b7f2e",
+    "Envs": "tsjvpJgFyhn+7arBKeRz4lFv9qihC5aJE6V23sCdeoALUCL3gMpfwxf+RA0lgmNwAG15"
+}
+
+```
+
+### WorkersCount
+Returns number of workers in a dispatchers standard area
+
+```python
+from gizo-sdk import Gizo
+
+gizo = Gizo()
+count = gizo.WorkersCount()
+```
+
+### WorkersCountBusy
+Returns number of workers in a dispatchers standard area that are busy
+
+```python
+from gizo-sdk import Gizo
+
+gizo = Gizo()
+count = gizo.WorkersCountBusy()
+```
+
+
+### WorkersCountNotBusy
+Returns number of workers in a dispatchers standard area that are not busy
+
+```python
+from gizo-sdk import Gizo
+
+gizo = Gizo()
+count = gizo.WorkersCountNotBusy()
+```
+
+### ExecStatus
+Returns the status of an exec
+
+```python
+from gizo-sdk import Gizo
+
+gizo = Gizo()
+status = gizo.Status()
 ```
 
 ## Built With
