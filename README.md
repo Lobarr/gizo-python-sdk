@@ -2,106 +2,121 @@
 
 [![Build Status](https://semaphoreci.com/api/v1/gizo-network/gizo-python-sdk/branches/develop/badge.svg)](https://semaphoreci.com/gizo-network/gizo-python-sdk)
 [![CodeFactor](https://www.codefactor.io/repository/github/gizo-network/gizo-python-sdk/badge/master)](https://www.codefactor.io/repository/github/gizo-network/gizo-python-sdk/overview/master)
+ [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/your/your-project/blob/master/LICENSE)
 
+This is a [Gizo](https://github.com/gizo-network/gizo) compatible Python SDK which implements the JSON RPC exposed on dispatcher nodes
 
-![Logo of the project](./images/logo.sample.png)
+<!-- toc -->
 
-# Name of the project &middot; [![Build Status](https://img.shields.io/travis/npm/npm/latest.svg?style=flat-square)](https://travis-ci.org/npm/npm) [![npm](https://img.shields.io/npm/v/npm.svg?style=flat-square)](https://www.npmjs.com/package/npm) [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/your/your-project/blob/master/LICENSE)
-> Additional information or tag line
+- [Installing](#installing)
+- [Getting Started](#getting-started)
+- [API](#api)
+- [Built With](#built-with)
+- [Versioning](#versioning)
+- [Contributing](#contributing)
+  * [Prerequisites](#prerequisites)
+  * [Setup Instructions](#setup-instructions)
+  * [Guidelines](#guidelines)
+  * [Style guideline](#style-guideline)
+- [Tests](#tests)
+- [Licensing](#licensing)
+- [Authors](#authors)
 
-A brief description of your project, what it is used for.
+<!-- tocstop -->
 
-## Installing / Getting started
+## Installing
 
-A quick introduction of the minimal setup you need to get a hello world up &
-running.
-
-```shell
-commands here
-```
-
-Here you should say what actually happens when you execute the code above.
-
-## Developing
-
-### Built With
-List main libraries, frameworks used including versions (React, Angular etc...)
-
-### Prerequisites
-What is needed to set up the dev environment. For instance, global dependencies or any other tools. include download links.
-
-
-### Setting up Dev
-
-Here's a brief intro about what a developer must do in order to start developing
-the project further:
+All you need to do to get this sdk is to install using pip by running the following command:
 
 ```shell
-git clone https://github.com/your/your-project.git
-cd your-project/
-packagemanager install
+pip install gizo-sdk
+```
+> Not deployed yet
+
+## Getting Started
+
+```python
+from gizo-sdk import Gizo
+
+gizo = Gizo()
 ```
 
-And state what happens step-by-step. If there is any virtual environment, local server or database feeder needed, explain here.
+## API
+Supported methods documented at [API](https://github.com/Lobarr/gizo-python-sdk/wiki/API)
 
-### Building
+## Built With
 
-If your project needs some additional steps for the developer to build the
-project after some code changes, state them here. for example:
-
-```shell
-./configure
-make
-make install
-```
-
-Here again you should state what actually happens when the code above gets
-executed.
-
-### Deploying / Publishing
-give instructions on how to build and release a new version
-In case there's some step you have to take that publishes this project to a
-server, this is the right time to state it.
-
-```shell
-packagemanager deploy your-project -s server.com -u username -p password
-```
-
-And again you'd need to tell what the previous code actually does.
+* [Hprose](https://github.com/hprose/hprose-python) - used for communication with dispatcher node
+* [Furl](https://github.com/gruns/furl) - used for parsed url
+* [Requests](https://github.com/requests/requests) - used for make API calls
 
 ## Versioning
 
-We can maybe use [SemVer](http://semver.org/) for versioning. For the versions available, see the [link to tags on this repository](/tags).
 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/gizo-network/gizo-python-sdk/tags). 
 
-## Configuration
+## Contributing
+We welcome and appreciate contributions from anyone regardless of magnitude of fixes. Just make sure to have fun while at it! If you'd like to contribute, follow the below instructions to setup a dev environment and make sure your contributions follow our coding guidelines.
 
-Here you should write what are all of the configurations a user can enter when
-using the project.
-
-## Tests
-
-Describe and show how to run the tests with code examples.
-Explain what these tests test and why.
-
+### Prerequisites
+* Python >= 3.5.6 - [Install](https://www.python.org/downloads/release/python-365/)
+* Pip - [Install](https://pip.pypa.io/en/stable/installing/)
+* Pytest
 ```shell
-Give an example
+pip install pytest
 ```
 
-## Style guide
+### Setup Instructions
+* Fork the repo
+* Clone the repo by running the following command
+```shell
+git clone https://github.com/gizo-network/gizo-python-sdk.git
+cd gizo-python-sdk
+```
+* Change git remote origin to your fork and upstream to this repo
+```shell
+git remote set-url origin https://github.com/USERNAME/gizo-python-sdk.git
+git remote add upstream https://github.com/gizo-network/gizo-python-sdk.git
+```
+> replace USERNAME with your github username
+* Create virtual environment and activate
+```shell
+python3 -m venv venv
+source ./venv/bin/activate
+```
+* Install dependencies
+```shell
 
-Explain your code style and show how to check it.
+pip install -r requirements.txt
+```
 
-## Api Reference
+If you've made it here, you're all set!
 
-If the api is external, link to api documentation. If not describe your api including authentication methods as well as explaining all the endpoints with their required parameters.
+### Guidelines
+* Stick to [git branching model](http://nvie.com/posts/a-successful-git-branching-model/)
+    * Make pull requests from your feature or hotfix branches into the develop branch
+* Push to the origin of your forked repo and make pull requests to the develop branch
+    * Pull requests straight to master would be rejected 
+* Commit messages should be prefixed with the modules they modify.
+    * E.g `gizo, utils: example message`
 
+### Style guideline
 
-## Database
+* Linting is enforced by pylint with the aid of the `.pylinrc` file
+## Tests
 
-Explaining what database (and version) has been used. Provide download links.
-Documents your database design and schemas, relations etc... 
+To run tests, you'd need have pytest installed. Run the following commands to run tests
+
+```shell
+pytest 
+```
 
 ## Licensing
 
-State what the license is and how to find the text version of the license.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+
+## Authors
+
+* **Jesuloba Egunjobi** - [Lobarr](https://github.com/Lobarr)
+
+See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
