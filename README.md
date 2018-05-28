@@ -4,12 +4,16 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/gizo-network/gizo-python-sdk/badge/master)](https://www.codefactor.io/repository/github/gizo-network/gizo-python-sdk/overview/master)
  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/your/your-project/blob/master/LICENSE)
 
-This is a [Gizo](https://github.com/gizo-network/gizo) compatible Python SDK which implements the JSON RPC exposed on dispatcher nodes
+This is a [Gizo](https://github.com/gizo-network/gizo) compatible Python SDK which implements the JSON RPC exposed on dispatcher nodes.
 
 <!-- toc -->
 
 - [Installing](#installing)
 - [Getting Started](#getting-started)
+  * [Connecting to Gizo main network](#connecting-to-gizo-main-network)
+  * [Connecting to Gizo test network](#connecting-to-gizo-test-network)
+  * [Connecting to specific dispatcher](#connecting-to-specific-dispatcher)
+  * [Specifying file path for config file](#specifying-file-path-for-config-file)
 - [API](#api)
 - [Built With](#built-with)
 - [Versioning](#versioning)
@@ -34,21 +38,85 @@ pip install gizo-sdk
 > Not deployed yet
 
 ## Getting Started
+### Connecting to Gizo main network
 
 ```python
 from gizo-sdk import Gizo
 
 gizo = Gizo()
+
 ```
+### Connecting to Gizo test network
+
+```python
+from gizo-sdk import Gizo
+
+gizo = Gizo(test=True)
+
+```
+### Connecting to specific dispatcher
+```python
+from gizo-sdk import Gizo
+
+url = "gizo://304e301006072a8648ce3d020106052b81040021033a0004f14a7b28af6fdf3136779e0a82e618d5f481ab0377222e71c9473e552785eb4adedfb67030b15ba1d877f9e1a06dd8a58870dd1402da7e6e@99.233.0.99:9995"
+gizo = Gizo(url=url)
+```
+### Specifying file path for config file
+
+```python
+from gizo-sdk import Gizo
+
+gizo = Gizo(export_file="./tmp/.gizo")
+
+```
+> Config file holds currently connected dispatcher and user's public and private keypair
+
+
+> Important - config file should be kept safe as keypair could be used to execute private jobs (treat as environment variables)
 
 ## API
-Supported methods documented at [API](https://github.com/Lobarr/gizo-python-sdk/wiki/API)
+### Version
+Returns dispatcher node's version information
+```python
+from gizo-sdk import Gizo
+gizo = Gizo()
+version = gizo.Version()
+````
+
+### Example return
+
+```python
+{
+    'Version': 1, 
+    'Height': 0, 
+    'Blocks': ['001f176b24e37440867e1a60fdb1c8e691a29e1651e9b7b57d6eb38335d94dfe']
+}
+```
+
+### PeerCount
+Return the number of peers a node has
+```python
+from gizo-sdk import Gizo
+gizo = Gizo()
+count = gizo.PeerCount()
+````
+### BlockByHash
+Returns block of specified hash
+
+```python
+from gizo-sdk import Gizo
+
+hash = "001f176b24e37440867e1a60fdb1c8e691a29e1651e9b7b57d6eb38335d94dfe"
+gizo = Gizo()
+block = gizo.BlockByHash(hash)
+```
 
 ## Built With
 
-* [Hprose](https://github.com/hprose/hprose-python) - used for communication with dispatcher node
-* [Furl](https://github.com/gruns/furl) - used for parsed url
-* [Requests](https://github.com/requests/requests) - used for make API calls
+* [Hprose](https://github.com/hprose/hprose-python) - communication with dispatcher node
+* [Furl](https://github.com/gruns/furl) - url parser
+* [Requests](https://github.com/requests/requests) - http client library
+* [Robber.py](https://github.com/vesln/robber.py) - assertion library
 
 ## Versioning
 

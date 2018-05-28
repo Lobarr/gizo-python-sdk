@@ -28,7 +28,7 @@ class Gizo:
         if unable to connect to a specified dispatcher
         if no dispatchers are available
     """
-    def __init__(self, url: Optional[str], export_file: Optional[str], test: bool=False) -> None:
+    def __init__(self, url: Optional[str]=None, export_file: Optional[str]=None, test: bool=False) -> None:
         self.__dispatcher: Dispatcher
         self.__client: hprose.HproseHttpClient
         self.__config: str
