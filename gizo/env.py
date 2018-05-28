@@ -1,4 +1,5 @@
 """Exec Environment Variables"""
+from typing import Sequence, List, Any
 class Env:
     """Exec environment variable
     Parameters
@@ -8,7 +9,7 @@ class Env:
     value : any
         value of environment variable
     """
-    def __init__(self, key: str, value):
+    def __init__(self, key: str, value: Any) -> None:
         self.key = key
         self.value = value
     def env(self) -> dict:
@@ -27,7 +28,7 @@ class Envs:
     envs : Env
         accepts as much environment variables as you'd like
     """
-    def __init__(self, *envs: Env):
+    def __init__(self, *envs: Env) -> None:
         self.envs = []
         for env in envs:
             self.envs.append(env.env())

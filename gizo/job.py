@@ -1,5 +1,6 @@
 """JobRequest and JobRequests"""
 import json
+from typing import Sequence, Dict, List
 
 class JobRequest:
     """Requests for task to be executed (singled exec)
@@ -11,7 +12,7 @@ class JobRequest:
     job_exec : dict
         exec to be executed
     """
-    def __init__(self, job_id: str, job_exec: dict):
+    def __init__(self, job_id: str, job_exec: dict) -> None:
         self.id = job_id
         self.job_exec = job_exec
     def jr(self):
@@ -32,12 +33,12 @@ class JobRequests:
     job_exec : dict
         execs to be executed
     """
-    def __init__(self, job_id: str, *execs: dict):
+    def __init__(self, job_id: str, *execs: Dict) -> None:
         self.id = job_id
-        self.execs = []
+        self.execs: List[Dict]
         for e in execs:
             self.execs.append(e)
-    def jrs(self):
+    def jrs(self) -> str:
         """
         Returns - json
         -------

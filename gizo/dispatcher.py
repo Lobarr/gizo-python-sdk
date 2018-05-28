@@ -2,7 +2,7 @@ from furl import furl
 
 class Dispatcher:
     """ keeps information about a dispatcher node"""
-    def __init__(self, url: str=None):
+    def __init__(self, url: str) -> None:
         """
         Parameters
         ----------

@@ -13,7 +13,7 @@ def b64_to_hex(value: str) -> str:
     -------
     hex value of base64 encoded string"""
     return bytes_to_hex(base64.b64decode(value))
-def bytes_to_hex(bytes_arr: list) -> str:
+def bytes_to_hex(bytes_arr: bytes) -> str:
     """
     Paramerters
     -----------

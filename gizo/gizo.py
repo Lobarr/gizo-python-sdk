@@ -2,6 +2,7 @@ import requests
 import hprose
 import json
 import sys
+from typing import Optional, Any, List, Dict
 from os import path
 from furl import furl
 from gizo.centrum import CENTRUM_TESTNET, CENTRUM
@@ -27,11 +28,11 @@ class Gizo:
         if unable to connect to a specified dispatcher
         if no dispatchers are available
     """
-    def __init__(self, url: str=None, export_file: str=None, test: bool=False):
-        self.__dispatcher: Dispatcher = None
-        self.__client: hprose.HproseHttpClient = None
-        self.__config: str = None
-        self.__keys: dict = None
+    def __init__(self, url: Optional[str], export_file: Optional[str], test: bool=False) -> None:
+        self.__dispatcher: Dispatcher
+        self.__client: hprose.HproseHttpClient
+        self.__config: str
+        self.__keys: dict
         self.__test: bool = test
 
         if export_file is None:
@@ -64,7 +65,7 @@ class Gizo:
                 self.__connect()
                 self.__keys = self.KeyPair()
                 self.__export_config()
-    def __import_config(self):
+    def __import_config(self) -> None:
         """Imports dispatcher and keys from config file
         Raises
         ------
@@ -75,7 +76,7 @@ class Gizo:
             content = json.loads(f.read())
         self.__dispatcher = Dispatcher(content["dispatcher"])
         self.__keys = content["keys"]
-    def __export_config(self):
+    def __export_config(self) -> None:
         """Exports dispatcher and keys to config file
         Raises
         ------
@@ -87,7 +88,7 @@ class Gizo:
         temp["keys"] = self.__keys
         with open(self.__config, "w+") as f:
             f.write(json.dumps(temp))
-    def __connect(self):
+    def __connect(self) -> None:
         """Connects to a dispatcher
         Raises
         ------
@@ -256,7 +257,7 @@ class Gizo:
         if fn.find(".ank") == -1:
             raise Exception("only anko files accepted")
         return self.__client.NewJob(self.__readTask(fn), name, priv, self.__keys['priv'])
-    def NewExec(self, args: list=None, retries: int=None, priority: int=None, backoff: int=None, exec_time: int=None, interval: int=None, ttl: int=None, envs: Envs=None) -> dict:
+    def NewExec(self, args: list, retries: int, priority: int, backoff: int, exec_time: int, interval: int, ttl: int, envs: Envs) -> dict:
         """
         Parameters
         ----------
@@ -322,7 +323,7 @@ class Gizo:
             if unable to find exec
         """
         return self.__client.ExecStatus(job_id, exec_hash)
-    def CancelExec(self, exec_hash:list):
+    def CancelExec(self, exec_hash:list) -> Any:
         """
         Parameters
         -----------
@@ -468,7 +469,7 @@ class Gizo:
             if unable to find exec
         """
         return self.__client.ExecArgs(job_id, exec_hash)
-    def ExecErr(self, job_id: str, exec_hash: list):
+    def ExecErr(self, job_id: str, exec_hash: list) -> Any:
         """
         Parameters
         -----------
@@ -506,7 +507,7 @@ class Gizo:
             if unable to find exec
         """
         return self.__client.ExecPriority(job_id, exec_hash)
-    def ExecResult(self, job_id: str, exec_hash: list):
+    def ExecResult(self, job_id: str, exec_hash: list) -> Any:
         """
         Parameters
         -----------
@@ -850,7 +851,7 @@ class Gizo:
 
         """
         return json.loads(self.__client.KeyPair())
-    def Solo(self, jr: JobRequest):
+    def Solo(self, jr: JobRequest) -> Any:
         """ Executes a single exec
         Parameters
         ----------
@@ -859,7 +860,7 @@ class Gizo:
 
         """
         return self.__client.Solo(jr.jr())
-    def Chord(self, jrs: list, callback_jr: JobRequests):
+    def Chord(self, jrs: list, callback_jr: JobRequests) -> Any:
         """ Executes execs one after the other then passes results into callback exec as an array (allows multiple jobs and multiple execs)
         Parameters
         ----------
@@ -869,15 +870,15 @@ class Gizo:
             callback job requests
         """
         return self.__client.Chord(jrs, callback_jr)
-    def Chain(self, jrs: list):
+    def Chain(self, jrs: list) -> Any:
         """ Executes execs one after the other (allows multiple jobs and multiple execs)
         Parameters
         ----------
         jrs : list
             array of JobRequests
         """
-        return self.__client.Chain(jrs, callback_jr)
-    def Batch(self, jrs: list,):
+        return self.__client.Chain(jrs)
+    def Batch(self, jrs: list) -> Any:
         """ Executes execs in parallel
         Parameters
         ----------
@@ -891,4 +892,4 @@ class Gizo:
             if ttl duration surpases gizo limit
             if number of retries is greated
         """
-        return self.__client.Batch(jrs, callback_jr)
+        return self.__client.Batch(jrs)
