@@ -319,8 +319,10 @@ Returns the status of an exec
 from gizo-sdk import Gizo
 
 gizo = Gizo()
-status = gizo.Status()
+status = gizo.ExecStatus()
 ```
+
+###
 
 ## Built With
 
@@ -330,7 +332,6 @@ status = gizo.Status()
 * [Robber.py](https://github.com/vesln/robber.py) - assertion library
 
 ## Versioning
-
 
 We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/gizo-network/gizo-python-sdk/tags). 
 
