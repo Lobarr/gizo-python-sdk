@@ -1,14 +1,9 @@
-import gizo.dispatcher as dispatcher
-import gizo.env as env
-import gizo.gizo as gizo
-import gizo.job as job
-import gizo.priorities as priorities
-import gizo.utils as utils
+""" Official python implementation of Gizo SDK """
 
-Dispatcher = dispatcher.Dispatcher
-Env = env.Env
-Envs = env.Envs
-Gizo = gizo.Gizo
-JobRequest = job.JobRequest
-Priorities = priorities
-Utils = utils
+from gizo.dispatcher import Dispatcher
+from gizo.env import Env, Envs
+from gizo.gizo import Gizo
+from gizo.job import JobRequest, JobRequests
+import gizo.priorities as Priorities
+import gizo.utils as Utils
+import gizo.status as Status

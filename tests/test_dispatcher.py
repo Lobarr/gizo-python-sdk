@@ -1,5 +1,7 @@
+"""Test for dispatcher"""
 import pytest
-import sys, os
+import sys
+import os
 from robber import expect
 myPath = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, myPath + '/../')

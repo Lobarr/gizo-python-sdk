@@ -1,5 +1,6 @@
 .vscode
 /venv
+.mypy_cache
 workspace.py
 /gizo/__pycache__
 /tests/__pycache__

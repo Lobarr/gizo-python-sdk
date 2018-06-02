@@ -1,6 +1,15 @@
 from furl import furl
+
 class Dispatcher:
-    def __init__(self, url: str=None):
+    """ keeps information about a dispatcher node"""
+    def __init__(self, url: str) -> None:
+        """
+        Parameters
+        ----------
+        url : str
+            url of dispatcher node
+        
+        """
         self.url = url
         self.pub = None
         self.ip = None
@@ -9,11 +18,20 @@ class Dispatcher:
         if parsed.username != None and parsed.host != None and parsed.port != None:
             self.pub = parsed.username
             self.ip = parsed.host
-            self.port = parsed.port        
+            self.port = parsed.port
         else:
             raise Exception("Unable to parse input url")
-
-    def rpc(self):
+    def rpc(self) -> str:
+        """
+        Returns : str
+        -------
+        dispatcher node's rpc endpoint
+        """
         return f"http://{self.ip}:{self.port}/rpc"
-    def status(self):
+    def status(self) -> str:
+        """
+        Returns : str
+        -------
+        dispatcher nodes's status endpoint
+        """
         return f"http://{self.ip}:{self.port}/status"
