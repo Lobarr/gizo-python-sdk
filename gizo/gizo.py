@@ -256,6 +256,10 @@ class Gizo:
         ------
         Exception 
             if fn is not an anko file (.ank)
+	
+	Returns : str
+	-------
+	ID of deployed job
         """
         if fn.find(".ank") == -1:
             raise Exception("only anko files accepted")
