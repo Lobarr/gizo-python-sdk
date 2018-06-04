@@ -5,5 +5,7 @@ workspace.py
 /gizo/__pycache__
 /tests/__pycache__
 /tests/.gizo
+/tests/.gizo-test
 .gizo
+.gizo-test
 .pytest_cache

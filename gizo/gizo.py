@@ -8,7 +8,7 @@ from furl import furl
 from gizo.centrum import CENTRUM_TESTNET, CENTRUM
 from gizo.dispatcher import Dispatcher
 from gizo.env import Envs
-from gizo.job import JobRequest, JobRequests
+from gizo.job import Requests
 
 class Gizo:
     """Connects to dispatcher and exposes rpc methods
@@ -856,22 +856,22 @@ class Gizo:
 
         """
         return json.loads(self.__client.KeyPair())
-    def Solo(self, jr: JobRequest) -> Any:
+    def Solo(self, jr: Requests) -> Any:
         """ Executes a single exec
         Parameters
         ----------
-        jr : JobRequest
+        jr : Requests
             job request
 
         """
-        return self.__client.Solo(jr.jr())
-    def Chord(self, jrs: list, callback_jr: JobRequests) -> Any:
+        return self.__client.Solo(jr.jrs())
+    def Chord(self, jrs: list, callback_jr: Requests) -> Any:
         """ Executes execs one after the other then passes results into callback exec as a list (allows multiple jobs and multiple execs)
         Parameters
         ----------
         jrs : list
-            list of JobRequests
-        callback_jr : JobRequests
+            list of Reqeusts
+        callback_jr : Requests
             callback job requests
         """
         return self.__client.Chord(jrs, callback_jr)
@@ -880,7 +880,7 @@ class Gizo:
         Parameters
         ----------
         jrs : list
-            list of JobRequests
+            list of Requests
         """
         return self.__client.Chain(jrs)
     def Batch(self, jrs: list) -> Any:
