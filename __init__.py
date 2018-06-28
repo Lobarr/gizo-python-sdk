@@ -1,1 +1,1 @@
-from gizo import Dispatcher, Env, Envs, Gizo, JobRequest, Priorities, Utils
+from .gizo import Dispatcher, Env, Envs, Gizo, JobRequest, JobRequests, Priorities, Utils, Status
